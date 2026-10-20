@@ -1,12 +1,13 @@
-MCC Ministries Thailand Bible Reader (Prototype)
+MCC Bible Reader — Genesis 1 verse alignment fix
 
-ဖိုင်များ:
-- index.html: Bible Reader interface
-- bible-data.json: OT/NT Word ဖိုင်များမှ ထုတ်ယူထားသော အခန်းစာသားဒေတာ
+ဤ bible-data.json ဖိုင်တွင် ကမ္ဘာဦးကျမ်း အခန်း ၁ ကို ပေးထားသော မူရင်း Word ဖိုင်နှင့် တိုက်စစ်၍ အငယ် ၁ မှ ၃၁ အထိ တစ်ငယ်ချင်းစီ ခွဲထားပါသည်။ ကျန်သော ကျမ်းအုပ်/အခန်းဒေတာများကို မပြောင်းထားပါ။
 
-အသုံးပြုပုံ:
-1. ဖိုင် ၂ ဖိုင်လုံးကို တစ်နေရာတည်းတွင် ထားပါ။
-2. GitHub Pages သို့ တင်လွှင့်ပါ။
-3. Google Sites တွင် Insert > Embed > URL ဖြင့် တင်ထားသော Reader URL ကို ထည့်ပါ။
+GitHub တွင် အစားထိုးရန်:
+1. Repository: https://github.com/hermonbtc/mcc-bible-reader
+2. bible-data.json ကိုဖွင့်ပါ။
+3. ညာဘက် Edit (ခဲတံ) ကိုနှိပ်ပြီး ဖိုင်အကြောင်းအရာအားလုံးကို အစားထိုးရန် မလွယ်ကူပါက ဖိုင်ကို delete လုပ်ပြီး အသစ် upload လုပ်ပါ။
+4. အလွယ်ဆုံးနည်း: Add file > Upload files မှ corrected bible-data.json ကို တင်ပါ။ သို့သော် အမည်တူဖိုင်ကို root ထဲ တင်ရာတွင် replace/overwrite လုပ်ရန် GitHub ပြသသည့်ညွှန်ကြားချက်ကို လိုက်နာပါ။
+5. Commit changes ကိုနှိပ်ပါ။
+6. Website ကို reload လုပ်ပြီး Genesis အခန်း 1 ကို စစ်ပါ။
 
-သတိပြုရန်: မူရင်း Word ဖိုင်အချို့တွင် အငယ်နံပါတ်နှင့် စာသားကို သီးခြားအုပ်စုလိုက်ဖွဲ့ထားသဖြင့် ဤမူသည် စမ်းသပ်မူဖြစ်သည်။ အငယ်အလိုက် တိကျသော mapping ကို ထပ်မံအတည်ပြုသင့်သည်။
+မှတ်ချက်: ဤပြင်ဆင်မှုသည် ကမ္ဘာဦးကျမ်း အခန်း ၁ တစ်ခန်းကိုသာ မူရင်း Word ဖိုင်နှင့် တိုက်စစ်ထားခြင်းဖြစ်သည်။ ကျန်အခန်းများကို မစစ်ရသေးပါ။
