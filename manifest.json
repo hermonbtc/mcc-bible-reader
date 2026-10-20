@@ -1,0 +1,14 @@
+
+{
+  "id": "/mcc-bible-reader/",
+  "name": "MCC Ministries Thailand Bible",
+  "short_name": "MCC Bible",
+  "description": "Read the Burmese Holy Bible offline.",
+  "lang": "my",
+  "start_url": "/mcc-bible-reader/",
+  "scope": "/mcc-bible-reader/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#ffffff",
+  "theme_color": "#153b32"
+}
