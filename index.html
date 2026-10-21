@@ -156,10 +156,61 @@ let db,bi=0,ci=0,fontSize=20,showingBookmarks=false;const $=id=>document.getElem
 function clean(s){return(s||"").replace(/\s+/g," ").trim()}function getBookmarks(){try{return JSON.parse(localStorage.getItem(BOOKMARK_KEY)||"[]")}catch(e){return[]}}function saveBookmarks(items){localStorage.setItem(BOOKMARK_KEY,JSON.stringify(items))}function keyFor(b,c,s){return `${b}:${c}:${s}`}function refFor(b,c,v){return `${db.books[b].burmese} ${c+1}:${v.label}`}
 function shareVerse(ref,text){const value=`${ref}\n${text}\n\nMCC Ministries Thailand Bible`;if(navigator.share){navigator.share({title:"MCC Bible",text:value}).catch(e=>{if(e.name!=="AbortError")copyShare(value)});return}copyShare(value)}function copyShare(value){if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(value).then(()=>alert("ကျမ်းပိုဒ်ကို Copy လုပ်ပြီးပါပြီ။")).catch(()=>window.prompt("စာသားကို Copy လုပ်ပါ:",value))}else window.prompt("စာသားကို Copy လုပ်ပါ:",value)}
 function toggleBookmark(item){let list=getBookmarks(),i=list.findIndex(x=>x.key===item.key);if(i>=0)list.splice(i,1);else list.push(item);saveBookmarks(list);if(showingBookmarks)renderBookmarks();else if($("search").value.trim())search();else render()}
-{let div=document.createElement("div");div.className="section";let line=document.createElement("div");line.className="verse-line";let n=document.createElement("span");n.className="num";n.textContent=v.label;let text=document.createElement("span");text.className="verse-text";text.textContent=v.text;line.append(n,text);div.appendChild(line);let actions=document.createElement("div");actions.className="verse-actions";let key=keyFor(b,c,i),saved=getBookmarks().some(x=>x.key===key);let bm=document.createElement("button");bm.className="btn";bm.textContent=saved?"★":"☆";
-bm.title=saved?"သိမ်းထားပြီး":"Bookmark";
-bm.setAttribute("aria-label",bm.title);
-bm.onclick=()=>toggleBookmark({key,bookIndex:b,chapterIndex:c,sectionIndex:i,label:v.label,text:v.text,ref:refFor(b,c,v)});let share=document.createElement("button");share.className="btn";share.textContent="↗ Share";share.onclick=()=>shareVerse(refFor(b,c,v),v.text);actions.append(bm,share);div.appendChild(actions);return div}
+
+function makeSection(v,b,c,i){
+  let div=document.createElement("div");
+  div.className="section";
+
+  let line=document.createElement("div");
+  line.className="verse-line";
+
+  let n=document.createElement("span");
+  n.className="num";
+  n.textContent=v.label;
+
+  let text=document.createElement("span");
+  text.className="verse-text";
+  text.textContent=v.text;
+
+  line.append(n,text);
+  div.appendChild(line);
+
+  let actions=document.createElement("div");
+  actions.className="verse-actions";
+
+  let key=keyFor(b,c,i);
+  let saved=getBookmarks().some(x=>x.key===key);
+
+  let bm=document.createElement("button");
+  bm.className="btn";
+  bm.textContent=saved?"★":"☆";
+  bm.title=saved?"သိမ်းထားပြီး":"Bookmark";
+  bm.setAttribute("aria-label",bm.title);
+  bm.onclick=()=>toggleBookmark({
+    key,
+    bookIndex:b,
+    chapterIndex:c,
+    sectionIndex:i,
+    label:v.label,
+    text:v.text,
+    ref:refFor(b,c,v)
+  });
+
+  let copy=document.createElement("button");
+  copy.className="btn";
+  copy.textContent="Copy";
+  copy.onclick=()=>copyShare(refFor(b,c,v)+"\n"+v.text);
+
+  let share=document.createElement("button");
+  share.className="btn";
+  share.textContent="↗ Share";
+  share.onclick=()=>shareVerse(refFor(b,c,v),v.text);
+
+  actions.append(bm,copy,share);
+  div.appendChild(actions);
+
+  return div;
+}
 async function start(){try{let r=await fetch("./bible-data.json");if(!r.ok)throw Error("Bible data HTTP "+r.status);db=await r.json();let b=$("book");db.books.forEach((x,i)=>{let o=document.createElement("option");o.value=i;o.textContent=x.burmese+" · "+x.english;b.appendChild(o)});b.addEventListener("change",()=>{bi=+b.value;ci=0;showingBookmarks=false;$("search").value="";fillChapters();render()});$("chapter").addEventListener("change",()=>{ci=+$("chapter").value;showingBookmarks=false;$("search").value="";render()});$("search").addEventListener("input",()=>{showingBookmarks=false;search()});$("prev").onclick=()=>move(-1);$("next").onclick=()=>move(1);$("smaller").onclick=()=>{fontSize=Math.max(15,fontSize-2);$("passage").style.fontSize=fontSize+"px"};$("larger").onclick=()=>{fontSize=Math.min(34,fontSize+2);$("passage").style.fontSize=fontSize+"px"};$("theme").onclick=()=>document.body.classList.toggle("dark");$("showBookmarks").onclick=()=>{showingBookmarks=!showingBookmarks;$("search").value="";showingBookmarks?renderBookmarks():render()};fillChapters();render()}catch(e){console.error(e);$("passage").innerHTML='<div class="empty">ဒေတာဖိုင်ကို မဖွင့်နိုင်ပါ။ bible-data.json ဖိုင်နှင့် အင်တာနက်ချိတ်ဆက်မှုကို စစ်ဆေးပါ။</div>'}}
 function fillChapters(){let c=$("chapter");c.innerHTML="";db.books[bi].chapters.forEach((x,i)=>{let o=document.createElement("option");o.value=i;o.textContent="အခန်း "+(i+1);c.appendChild(o)});c.value=ci}
 function render(){if(!db)return;showingBookmarks=false;let b=db.books[bi],c=b.chapters[ci];$("book").value=bi;$("chapter").value=ci;$("heading").textContent=b.burmese+" "+(ci+1);$("subheading").textContent=b.english+" · အခန်း "+(ci+1);$("passage").innerHTML="";c.sections.forEach((v,i)=>$("passage").appendChild(makeSection(v,bi,ci,i)));$("prev").disabled=bi===0&&ci===0;$("next").disabled=bi===db.books.length-1&&ci===b.chapters.length-1}
