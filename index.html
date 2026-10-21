@@ -1,3 +1,4 @@
+```
 <!doctype html>
 <html lang="my">
 <head>
@@ -203,16 +204,22 @@ function makeSection(v,b,c,i){
   text.textContent=v.text;
   line.append(n,text);
   const toggleMenu=()=>{
-  document.querySelectorAll(".section.active").forEach(s=>{
-    if(s!==div) s.classList.remove("active");
-  });
-  div.classList.toggle("active");
-};
+    document.querySelectorAll(".section.active").forEach(s=>{
+      if(s!==div){
+        s.classList.remove("active");
+        const oldActions=s.querySelector(".verse-actions");
+        if(oldActions) oldActions.style.setProperty("display","none","important");
+      }
+    });
+    const isActive=div.classList.toggle("active");
+    actions.style.setProperty("display",isActive ? "flex" : "none","important");
+  };
 line.addEventListener("click",toggleMenu);
   line.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();toggleMenu();}});
   div.appendChild(line);
   let actions=document.createElement("div");
   actions.className="verse-actions";
+  actions.style.setProperty("display","none","important");
   actions.addEventListener("click",e=>e.stopPropagation());
   let key=keyFor(b,c,i);
   let saved=getBookmarks().some(x=>x.key===key);
@@ -242,3 +249,4 @@ function search(){if(!db)return;let q=clean($("search").value).toLowerCase();if(
 if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(e=>console.error("Service Worker registration failed:",e)))}
 start();
 </script></body></html>
+```
