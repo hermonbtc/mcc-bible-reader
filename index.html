@@ -5,7 +5,29 @@
 <link rel="manifest" href="./manifest.json"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="MCC Bible"><meta name="apple-mobile-web-app-status-bar-style" content="default">
 <title>MCC Ministries Thailand — Bible Reader</title>
 <style>
-:root{--bg:#f6f5f0;--card:#fff;--ink:#202923;--muted:#65736a;--green:#174b3b;--line:#dfe5df;--accent:#d6b56d}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:"Noto Sans Myanmar","Myanmar Text",system-ui,sans-serif;line-height:1.8}.hero{background:linear-gradient(135deg,#12392f,#28634c);color:white;padding:26px 18px 24px}.wrap{max-width:1050px;margin:auto}.brand{font-size:13px;letter-spacing:.04em;opacity:.86}.hero h1{font-size:clamp(24px,4vw,36px);line-height:1.4;margin:6px 0}.hero p{margin:0;color:#e1eee5}.controls{display:grid;grid-template-columns:2fr 1fr 1fr;gap:10px;padding:18px 0}.controls input,.controls select,.btn{width:100%;font:inherit;padding:11px 12px;border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--ink)}.reader{background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden;box-shadow:0 4px 18px #102c1610}.readerhead{padding:18px 20px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}.readerhead h2{margin:0;font-size:22px;color:var(--green)}.actions{display:flex;gap:8px;flex-wrap:wrap}.actions button,.verse-actions button{cursor:pointer;width:auto}.passage{padding:18px 22px 30px;font-size:20px}.section{padding:12px 0;border-bottom:1px solid #eef0ec}.section:last-child{border:0}.verse-line{display:flex;align-items:flex-start;gap:9px}.num{display:inline-flex;align-items:center;justify-content:center;background:#eaf1e9;color:var(--green);border-radius:6px;min-width:27px;height:27px;font-size:13px;font-weight:700;margin-top:5px;flex-shrink:0}.verse-text{flex:1;white-space:pre-wrap}.verse-actions{display:flex;gap:6px;margin:8px 0 0 36px;flex-wrap:wrap}.verse-actions .btn{font-size:13px;padding:5px 10px;width:auto}.nav{display:flex;justify-content:space-between;gap:10px;padding:14px 20px;border-top:1px solid var(--line)}.nav button{cursor:pointer}.note{color:var(--muted);font-size:13px;padding:12px 0 24px}.empty{padding:35px;text-align:center;color:var(--muted)}.dark{--bg:#121916;--card:#1b2420;--ink:#edf4ef;--muted:#a8b8ad;--green:#b4d8bf;--line:#35443b}.dark .num{background:#293c31;color:#d9f1df}.dark .hero{background:linear-gradient(135deg,#0b201b,#163d2e)}.footer{text-align:center;color:var(--muted);font-size:12px;padding:20px}@media(max-width:650px){.controls{grid-template-columns:1fr 1fr}.controls input{grid-column:1/-1}.passage{padding:14px;font-size:18px}.readerhead{padding:14px}.hero{padding:22px 15px}.verse-actions{margin-left:0}}
+:root{--bg:#f6f5f0;--card:#fff;--ink:#202923;--muted:#65736a;--green:#174b3b;--line:#dfe5df;--accent:#d6b56d}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:"Noto Sans Myanmar","Myanmar Text",system-ui,sans-serif;line-height:1.8}.hero{background:linear-gradient(135deg,#12392f,#28634c);color:white;padding:26px 18px 24px}.wrap{max-width:1050px;margin:auto}.brand{font-size:13px;letter-spacing:.04em;opacity:.86}.hero h1{font-size:clamp(24px,4vw,36px);line-height:1.4;margin:6px 0}.hero p{margin:0;color:#e1eee5}.controls{display:grid;grid-template-columns:2fr 1fr 1fr;gap:10px;padding:18px 0}.controls input,.controls select,.btn{width:100%;font:inherit;padding:11px 12px;border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--ink)}.reader{background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden;box-shadow:0 4px 18px #102c1610}.readerhead{padding:18px 20px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}.readerhead h2{margin:0;font-size:22px;color:var(--green)}.actions{display:flex;gap:8px;flex-wrap:wrap}.actions button,.verse-actions button{cursor:pointer;width:auto}.passage{padding:18px 22px 30px;font-size:20px}.section{padding:12px 0;border-bottom:1px solid #eef0ec}.section:last-child{border:0}.verse-line{display:flex;align-items:flex-start;gap:9px}.num{display:inline-flex;align-items:center;justify-content:center;background:#eaf1e9;color:var(--green);border-radius:6px;min-width:27px;height:27px;font-size:13px;font-weight:700;margin-top:5px;flex-shrink:0}.verse-text{flex:1;white-space:pre-wrap}.verse-actions{display:flex;gap:6px;margin:8px 0 0 36px;flex-wrap:wrap}
+.verse-actions .btn {
+  font-size: 14px;
+  padding: 8px 12px;
+  min-height: 40px;
+  border-radius: 8px;
+  width: auto;
+  cursor: pointer;
+}
+
+@media (max-width: 650px) {
+  .verse-actions {
+    gap: 8px;
+    margin-left: 0;
+  }
+
+  .verse-actions .btn {
+    font-size: 14px;
+    padding: 8px 12px;
+    min-height: 42px;
+  }
+}
+{font-size:13px;padding:5px 10px;width:auto}.nav{display:flex;justify-content:space-between;gap:10px;padding:14px 20px;border-top:1px solid var(--line)}.nav button{cursor:pointer}.note{color:var(--muted);font-size:13px;padding:12px 0 24px}.empty{padding:35px;text-align:center;color:var(--muted)}.dark{--bg:#121916;--card:#1b2420;--ink:#edf4ef;--muted:#a8b8ad;--green:#b4d8bf;--line:#35443b}.dark .num{background:#293c31;color:#d9f1df}.dark .hero{background:linear-gradient(135deg,#0b201b,#163d2e)}.footer{text-align:center;color:var(--muted);font-size:12px;padding:20px}@media(max-width:650px){.controls{grid-template-columns:1fr 1fr}.controls input{grid-column:1/-1}.passage{padding:14px;font-size:18px}.readerhead{padding:14px}.hero{padding:22px 15px}.verse-actions{margin-left:0}}
 
 
 /* MCC Bible Reader - compact responsive verse layout */
