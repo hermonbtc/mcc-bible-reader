@@ -179,8 +179,13 @@ function makeSection(v,b,c,i){
   text.className="verse-text";
   text.textContent=v.text;
   line.append(n,text);
-  const toggleMenu=()=>div.classList.toggle("active");
-  line.addEventListener("click",toggleMenu);
+  const toggleMenu=()=>{
+  document.querySelectorAll(".section.active").forEach(s=>{
+    if(s!==div) s.classList.remove("active");
+  });
+  div.classList.toggle("active");
+};
+line.addEventListener("click",toggleMenu);
   line.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();toggleMenu();}});
   div.appendChild(line);
   let actions=document.createElement("div");
