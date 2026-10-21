@@ -145,6 +145,14 @@
     padding: 3px 5px;
   }
 }
+
+/* Tap a verse to reveal its actions; keep the reading view clean. */
+.section { display:block !important; }
+.verse-line { cursor:pointer; border-radius:6px; }
+.verse-line:focus-visible { outline:2px solid var(--accent); outline-offset:3px; }
+.verse-actions { display:none !important; margin:8px 0 0 36px !important; }
+.section.active .verse-actions { display:flex !important; }
+@media(max-width:650px) { .verse-actions { margin-left:0 !important; } }
 </style></head>
 <body><header class="hero"><div class="wrap"><div class="brand">MCC MINISTRIES THAILAND</div><h1>မြန်မာသမ္မာကျမ်းစာ</h1><p>Online Bible Reader · ကျမ်းစာကို ရှာဖွေဖတ်ရှုရန်</p></div></header>
 <main class="wrap" style="padding:0 14px"><section class="controls"><input id="search" placeholder="ကျမ်းစာထဲတွင် စကားလုံး ရှာရန်…" aria-label="Search scripture"><select id="book" aria-label="ကျမ်းအုပ်ရွေးရန်"></select><select id="chapter" aria-label="အခန်းရွေးရန်"></select></section>
@@ -156,65 +164,51 @@ let db,bi=0,ci=0,fontSize=20,showingBookmarks=false;const $=id=>document.getElem
 function clean(s){return(s||"").replace(/\s+/g," ").trim()}function getBookmarks(){try{return JSON.parse(localStorage.getItem(BOOKMARK_KEY)||"[]")}catch(e){return[]}}function saveBookmarks(items){localStorage.setItem(BOOKMARK_KEY,JSON.stringify(items))}function keyFor(b,c,s){return `${b}:${c}:${s}`}function refFor(b,c,v){return `${db.books[b].burmese} ${c+1}:${v.label}`}
 function shareVerse(ref,text){const value=`${ref}\n${text}\n\nMCC Ministries Thailand Bible`;if(navigator.share){navigator.share({title:"MCC Bible",text:value}).catch(e=>{if(e.name!=="AbortError")copyShare(value)});return}copyShare(value)}function copyShare(value){if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(value).then(()=>alert("ကျမ်းပိုဒ်ကို Copy လုပ်ပြီးပါပြီ။")).catch(()=>window.prompt("စာသားကို Copy လုပ်ပါ:",value))}else window.prompt("စာသားကို Copy လုပ်ပါ:",value)}
 function toggleBookmark(item){let list=getBookmarks(),i=list.findIndex(x=>x.key===item.key);if(i>=0)list.splice(i,1);else list.push(item);saveBookmarks(list);if(showingBookmarks)renderBookmarks();else if($("search").value.trim())search();else render()}
-
 function makeSection(v,b,c,i){
   let div=document.createElement("div");
   div.className="section";
-
   let line=document.createElement("div");
   line.className="verse-line";
-
+  line.setAttribute("role","button");
+  line.setAttribute("tabindex","0");
+  line.setAttribute("aria-label","ကျမ်းချက်လုပ်ဆောင်ချက်များ ဖွင့်ရန်");
   let n=document.createElement("span");
   n.className="num";
   n.textContent=v.label;
-
   let text=document.createElement("span");
   text.className="verse-text";
   text.textContent=v.text;
-
   line.append(n,text);
+  const toggleMenu=()=>div.classList.toggle("active");
+  line.addEventListener("click",toggleMenu);
+  line.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();toggleMenu();}});
   div.appendChild(line);
-
   let actions=document.createElement("div");
   actions.className="verse-actions";
-
+  actions.addEventListener("click",e=>e.stopPropagation());
   let key=keyFor(b,c,i);
   let saved=getBookmarks().some(x=>x.key===key);
-
   let bm=document.createElement("button");
   bm.className="btn";
-  bm.textContent=saved?"★":"☆";
+  bm.textContent=saved?"★ Bookmark":"☆ Bookmark";
   bm.title=saved?"သိမ်းထားပြီး":"Bookmark";
-  bm.setAttribute("aria-label",bm.title);
-  bm.onclick=()=>toggleBookmark({
-    key,
-    bookIndex:b,
-    chapterIndex:c,
-    sectionIndex:i,
-    label:v.label,
-    text:v.text,
-    ref:refFor(b,c,v)
-  });
-
+  bm.onclick=()=>toggleBookmark({key,bookIndex:b,chapterIndex:c,sectionIndex:i,label:v.label,text:v.text,ref:refFor(b,c,v)});
   let copy=document.createElement("button");
   copy.className="btn";
   copy.textContent="Copy";
   copy.onclick=()=>copyShare(refFor(b,c,v)+"\n"+v.text);
-
   let share=document.createElement("button");
   share.className="btn";
   share.textContent="↗ Share";
   share.onclick=()=>shareVerse(refFor(b,c,v),v.text);
-
   actions.append(bm,copy,share);
   div.appendChild(actions);
-
   return div;
 }
 async function start(){try{let r=await fetch("./bible-data.json");if(!r.ok)throw Error("Bible data HTTP "+r.status);db=await r.json();let b=$("book");db.books.forEach((x,i)=>{let o=document.createElement("option");o.value=i;o.textContent=x.burmese+" · "+x.english;b.appendChild(o)});b.addEventListener("change",()=>{bi=+b.value;ci=0;showingBookmarks=false;$("search").value="";fillChapters();render()});$("chapter").addEventListener("change",()=>{ci=+$("chapter").value;showingBookmarks=false;$("search").value="";render()});$("search").addEventListener("input",()=>{showingBookmarks=false;search()});$("prev").onclick=()=>move(-1);$("next").onclick=()=>move(1);$("smaller").onclick=()=>{fontSize=Math.max(15,fontSize-2);$("passage").style.fontSize=fontSize+"px"};$("larger").onclick=()=>{fontSize=Math.min(34,fontSize+2);$("passage").style.fontSize=fontSize+"px"};$("theme").onclick=()=>document.body.classList.toggle("dark");$("showBookmarks").onclick=()=>{showingBookmarks=!showingBookmarks;$("search").value="";showingBookmarks?renderBookmarks():render()};fillChapters();render()}catch(e){console.error(e);$("passage").innerHTML='<div class="empty">ဒေတာဖိုင်ကို မဖွင့်နိုင်ပါ။ bible-data.json ဖိုင်နှင့် အင်တာနက်ချိတ်ဆက်မှုကို စစ်ဆေးပါ။</div>'}}
 function fillChapters(){let c=$("chapter");c.innerHTML="";db.books[bi].chapters.forEach((x,i)=>{let o=document.createElement("option");o.value=i;o.textContent="အခန်း "+(i+1);c.appendChild(o)});c.value=ci}
 function render(){if(!db)return;showingBookmarks=false;let b=db.books[bi],c=b.chapters[ci];$("book").value=bi;$("chapter").value=ci;$("heading").textContent=b.burmese+" "+(ci+1);$("subheading").textContent=b.english+" · အခန်း "+(ci+1);$("passage").innerHTML="";c.sections.forEach((v,i)=>$("passage").appendChild(makeSection(v,bi,ci,i)));$("prev").disabled=bi===0&&ci===0;$("next").disabled=bi===db.books.length-1&&ci===b.chapters.length-1}
-function renderBookmarks(){showingBookmarks=true;let items=getBookmarks();$("heading").textContent="သိမ်းထားသောကျမ်းပိုဒ်များ";$("subheading").textContent="သိမ်းထားမှု "+items.length+" ခု";$("passage").innerHTML="";if(!items.length){$("passage").innerHTML='<div class="empty">Bookmark မရှိသေးပါ။ ကျမ်းပိုဒ်အောက်က ☆ Bookmark ကို နှိပ်ပါ။</div>';return}items.forEach(item=>{let d=document.createElement("div");d.className="section";let open=document.createElement("button");open.className="btn";open.style.width="auto";open.textContent=item.ref+" ဖွင့်ရန်";open.onclick=()=>{bi=item.bookIndex;ci=item.chapterIndex;showingBookmarks=false;$("search").value="";fillChapters();render();setTimeout(()=>{let target=$("passage").querySelectorAll(".section")[item.sectionIndex];if(target)target.scrollIntoView({behavior:"smooth",block:"center"})},50)};let t=document.createElement("div");t.textContent=item.text;let actions=document.createElement("div");actions.className="verse-actions";let remove=document.createElement("button");remove.className="btn";remove.textContent="ဖယ်ရှားရန်";remove.onclick=()=>{saveBookmarks(getBookmarks().filter(x=>x.key!==item.key));renderBookmarks()};let share=document.createElement("button");share.className="btn";share.textContent="↗ Share";share.onclick=()=>shareVerse(item.ref,item.text);actions.append(remove,share);d.append(open,t,actions);$("passage").appendChild(d)})}
+function renderBookmarks(){showingBookmarks=true;let items=getBookmarks();$("heading").textContent="သိမ်းထားသောကျမ်းပိုဒ်များ";$("subheading").textContent="သိမ်းထားမှု "+items.length+" ခု";$("passage").innerHTML="";if(!items.length){$("passage").innerHTML='<div class="empty">Bookmark မရှိသေးပါ။ ကျမ်းချက်ကို နှိပ်ပြီး Bookmark ကို ရွေးပါ။</div>';return}items.forEach(item=>{let d=document.createElement("div");d.className="section";let open=document.createElement("button");open.className="btn";open.style.width="auto";open.textContent=item.ref+" ဖွင့်ရန်";open.onclick=()=>{bi=item.bookIndex;ci=item.chapterIndex;showingBookmarks=false;$("search").value="";fillChapters();render();setTimeout(()=>{let target=$("passage").querySelectorAll(".section")[item.sectionIndex];if(target)target.scrollIntoView({behavior:"smooth",block:"center"})},50)};let t=document.createElement("div");t.textContent=item.text;let actions=document.createElement("div");actions.className="verse-actions";let remove=document.createElement("button");remove.className="btn";remove.textContent="ဖယ်ရှားရန်";remove.onclick=()=>{saveBookmarks(getBookmarks().filter(x=>x.key!==item.key));renderBookmarks()};let share=document.createElement("button");share.className="btn";share.textContent="↗ Share";share.onclick=()=>shareVerse(item.ref,item.text);actions.append(remove,share);d.append(open,t,actions);$("passage").appendChild(d)})}
 function move(d){ci+=d;if(ci<0){if(bi===0){ci=0;return}bi--;ci=db.books[bi].chapters.length-1}else if(ci>=db.books[bi].chapters.length){if(bi===db.books.length-1){ci=db.books[bi].chapters.length-1;return}bi++;ci=0}$("search").value="";fillChapters();render()}
 function search(){if(!db)return;let q=clean($("search").value).toLowerCase();if(!q){render();return}let found=[];db.books.forEach((b,i)=>b.chapters.forEach((c,j)=>c.sections.forEach((v,k)=>{if(v.text.toLowerCase().includes(q)||b.burmese.toLowerCase().includes(q)||b.english.toLowerCase().includes(q))found.push({b,i,j,k,v})})));$("heading").textContent="ရှာဖွေမှုရလဒ်";$("subheading").textContent="တွေ့ရှိမှု "+found.length+" ခု";$("passage").innerHTML="";found.slice(0,150).forEach(x=>{let wrap=document.createElement("div");wrap.className="section";let open=document.createElement("button");open.className="btn";open.style.width="auto";open.textContent=x.b.burmese+" "+(x.j+1)+" · ဖွင့်ရန်";open.onclick=()=>{bi=x.i;ci=x.j;$("search").value="";fillChapters();render();setTimeout(()=>{let target=$("passage").querySelectorAll(".section")[x.k];if(target)target.scrollIntoView({behavior:"smooth",block:"center"})},50)};wrap.append(open,makeSection(x.v,x.i,x.j,x.k));$("passage").appendChild(wrap)});if(!found.length)$("passage").innerHTML='<div class="empty">မတွေ့ပါ။ စကားလုံးကို ပြန်စစ်ကြည့်ပါ။</div>'}
 if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(e=>console.error("Service Worker registration failed:",e)))}
