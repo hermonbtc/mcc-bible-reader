@@ -89,13 +89,15 @@
 
 /* Desktop: verse number, compact actions underneath */
 @media (min-width: 651px) {
+  
+@media (min-width: 651px) {
   .section {
     display: grid;
-    grid-template-columns: 38px minmax(0, 1fr);
+    grid-template-columns: 32px minmax(0, 1fr);
     column-gap: 8px;
-    row-gap: 3px;
+    row-gap: 2px;
     align-items: start;
-    padding: 5px 0;
+    padding: 4px 0;
   }
 
   .verse-line {
@@ -106,7 +108,7 @@
     grid-column: 1;
     grid-row: 1;
     justify-self: center;
-    margin-top: 3px;
+    margin-top: 2px;
   }
 
   .verse-text {
@@ -118,24 +120,23 @@
   .verse-actions {
     grid-column: 1;
     grid-row: 2;
-    justify-self: center;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 3px;
+    gap: 2px;
     margin: 0;
   }
 
   .verse-actions .btn {
-    font-size: 10px;
-    padding: 2px 4px;
-    line-height: 1.2;
-    border-radius: 5px;
+    font-size: 9px;
+    padding: 2px 3px;
+    line-height: 1.15;
+    border-radius: 4px;
   }
 
   .passage {
-    padding-top: 10px;
-    padding-bottom: 16px;
+    padding-top: 6px;
+    padding-bottom: 8px;
   }
 }
 </style></head>
@@ -151,7 +152,8 @@ function shareVerse(ref,text){const value=`${ref}\n${text}\n\nMCC Ministries Tha
 function toggleBookmark(item){let list=getBookmarks(),i=list.findIndex(x=>x.key===item.key);if(i>=0)list.splice(i,1);else list.push(item);saveBookmarks(list);if(showingBookmarks)renderBookmarks();else if($("search").value.trim())search();else render()}
 {let div=document.createElement("div");div.className="section";let line=document.createElement("div");line.className="verse-line";let n=document.createElement("span");n.className="num";n.textContent=v.label;let text=document.createElement("span");text.className="verse-text";text.textContent=v.text;line.append(n,text);div.appendChild(line);let actions=document.createElement("div");actions.className="verse-actions";let key=keyFor(b,c,i),saved=getBookmarks().some(x=>x.key===key);let bm=document.createElement("button");bm.className="btn";bm.textContent=saved?"★":"☆";
 bm.title=saved?"သိမ်းထားပြီး":"Bookmark";
-bm.setAttribute("aria-label",bm.title);"☆ Bookmark";bm.onclick=()=>toggleBookmark({key,bookIndex:b,chapterIndex:c,sectionIndex:i,label:v.label,text:v.text,ref:refFor(b,c,v)});let share=document.createElement("button");share.className="btn";share.textContent="↗ Share";share.onclick=()=>shareVerse(refFor(b,c,v),v.text);actions.append(bm,share);div.appendChild(actions);return div}
+bm.setAttribute("aria-label",bm.title);
+bm.onclick=()=>toggleBookmark({key,bookIndex:b,chapterIndex:c,sectionIndex:i,label:v.label,text:v.text,ref:refFor(b,c,v)});let share=document.createElement("button");share.className="btn";share.textContent="↗ Share";share.onclick=()=>shareVerse(refFor(b,c,v),v.text);actions.append(bm,share);div.appendChild(actions);return div}
 async function start(){try{let r=await fetch("./bible-data.json");if(!r.ok)throw Error("Bible data HTTP "+r.status);db=await r.json();let b=$("book");db.books.forEach((x,i)=>{let o=document.createElement("option");o.value=i;o.textContent=x.burmese+" · "+x.english;b.appendChild(o)});b.addEventListener("change",()=>{bi=+b.value;ci=0;showingBookmarks=false;$("search").value="";fillChapters();render()});$("chapter").addEventListener("change",()=>{ci=+$("chapter").value;showingBookmarks=false;$("search").value="";render()});$("search").addEventListener("input",()=>{showingBookmarks=false;search()});$("prev").onclick=()=>move(-1);$("next").onclick=()=>move(1);$("smaller").onclick=()=>{fontSize=Math.max(15,fontSize-2);$("passage").style.fontSize=fontSize+"px"};$("larger").onclick=()=>{fontSize=Math.min(34,fontSize+2);$("passage").style.fontSize=fontSize+"px"};$("theme").onclick=()=>document.body.classList.toggle("dark");$("showBookmarks").onclick=()=>{showingBookmarks=!showingBookmarks;$("search").value="";showingBookmarks?renderBookmarks():render()};fillChapters();render()}catch(e){console.error(e);$("passage").innerHTML='<div class="empty">ဒေတာဖိုင်ကို မဖွင့်နိုင်ပါ။ bible-data.json ဖိုင်နှင့် အင်တာနက်ချိတ်ဆက်မှုကို စစ်ဆေးပါ။</div>'}}
 function fillChapters(){let c=$("chapter");c.innerHTML="";db.books[bi].chapters.forEach((x,i)=>{let o=document.createElement("option");o.value=i;o.textContent="အခန်း "+(i+1);c.appendChild(o)});c.value=ci}
 function render(){if(!db)return;showingBookmarks=false;let b=db.books[bi],c=b.chapters[ci];$("book").value=bi;$("chapter").value=ci;$("heading").textContent=b.burmese+" "+(ci+1);$("subheading").textContent=b.english+" · အခန်း "+(ci+1);$("passage").innerHTML="";c.sections.forEach((v,i)=>$("passage").appendChild(makeSection(v,bi,ci,i)));$("prev").disabled=bi===0&&ci===0;$("next").disabled=bi===db.books.length-1&&ci===b.chapters.length-1}
