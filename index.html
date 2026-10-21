@@ -177,6 +177,14 @@
 .section.active .verse-actions { display:flex !important; }
 .section:not(.active) .verse-actions { display:none !important; }
 @media(max-width:650px) { .verse-actions { margin-left:0 !important; } }
+/* Hide verse actions until a verse is tapped */
+.section .verse-actions {
+  display: none !important;
+}
+
+.section.active .verse-actions {
+  display: flex !important;
+}
 </style></head>
 <body><header class="hero"><div class="wrap"><div class="brand">MCC MINISTRIES THAILAND</div><h1>မြန်မာသမ္မာကျမ်းစာ</h1><p>Online Bible Reader · ကျမ်းစာကို ရှာဖွေဖတ်ရှုရန်</p></div></header>
 <main class="wrap" style="padding:0 14px"><section class="controls"><input id="search" placeholder="ကျမ်းစာထဲတွင် စကားလုံး ရှာရန်…" aria-label="Search scripture"><select id="book" aria-label="ကျမ်းအုပ်ရွေးရန်"></select><select id="chapter" aria-label="အခန်းရွေးရန်"></select></section>
